@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { login } from "../services/auth.service";
+import { login, logout } from "../services/auth.service";
 
 export const loginController = async (req: Request, res: Response) => {
   try {
@@ -12,5 +12,11 @@ export const loginController = async (req: Request, res: Response) => {
 };
 
 export const logoutController = async (req: Request, res: Response) => {
-  res.json({ message: "Logout successful" });
+  try {
+    const result = await logout(req , res);
+    return res.json(result);
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
 };
