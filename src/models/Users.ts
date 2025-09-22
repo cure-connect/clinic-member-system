@@ -7,6 +7,7 @@ export class User extends Model {
   declare username: string;
   declare password: string;
   declare role: string;
+  declare qrcode: string
   declare created_at: Date;
   declare updated_at: Date;
 }
@@ -32,6 +33,11 @@ User.init(
       allowNull: false,
       defaultValue: "user",
     },
+    qrcode: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+    },
     created_at: {
       type: DataTypes.DATE
     },
@@ -43,6 +49,7 @@ User.init(
     sequelize,
     modelName: "User",
     tableName: "users",
+    timestamps: false,
     hooks: {
       beforeCreate: async (user) => {
         const salt = await bcrypt.genSalt(10);

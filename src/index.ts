@@ -1,11 +1,12 @@
 import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
+import cors from "cors"
+dotenv.config();
 import authRoutes from "./routes/auth.routes";
 import sequelize ,{ DBConnection } from "./database/db";
-import createRoutes from "./routes/users.routes"
-import getRoutes from "./routes/users.routes"
+import userRoutes from "./routes/users.routes"
+import qrRoutes from "./routes/qr.routes"
 
-dotenv.config();
 const app = express();
 
 (async () => {
@@ -13,6 +14,7 @@ const app = express();
   await sequelize.sync({ alter: true });
 })();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -23,10 +25,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-
 app.use("/auth", authRoutes);
 
-app.use("/create", createRoutes)
-app.use("/users", getRoutes)
+app.use("/api", userRoutes)
+app.use("/api", qrRoutes)
 
 export default app;

@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 
-export const login = async (username: string, password: string) => {
+export const login = async (username: string, password: string, role: string) => {
   const user = await User.findOne({ where: { username } });
 
   if (!user) throw new Error("User not found");
@@ -13,7 +13,7 @@ export const login = async (username: string, password: string) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Invalid credentials");
 
-  const token = generateToken({ id: user.id, username: user.username, role: user.role });
+  const token = generateToken({ username: user.username, role: user.role });
 
   return token;
 };
@@ -31,8 +31,6 @@ export const logout = async (req: Request, res: Response) => {
     if (!decoded || !decoded.exp) {
         return res.status(400).json({ message: "Invalid token" });
     }
-
-    console.log('decode', decoded)
     
     const expiresAt = decoded.exp;
     const now = Math.floor(Date.now() / 1000);

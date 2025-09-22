@@ -3,9 +3,16 @@ import { login, logout } from "../services/auth.service";
 
 export const loginController = async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body;
-    const token = await login(username, password);
-    res.json({ message: "Login successful", token });
+    const { username, password, role } = req.body;
+    const token = await login(username, password, role);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        token: token,
+        username: username,
+        role: role
+      }
+    })
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
