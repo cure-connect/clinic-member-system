@@ -7,7 +7,7 @@ const router = Router()
 router.get("/user", getAllUserController)
 router.get("/users/:id", getUserByIdController)
 
-router.post("/create", authMiddleware, roleMiddleware(["manager", "admin"]), createUserController)
+router.post("/create", createUserController)
 
 router.delete("/users/:id", deleteUserByIdController)
 export default router

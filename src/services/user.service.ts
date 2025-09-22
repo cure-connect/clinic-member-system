@@ -27,12 +27,17 @@ export const getUserById = async (id: number) => {
 }
 
 //POST Create User
-export const createUser = async (username: string, password: string, role: string) => {
+export const createUser = async (username: string, password: string, title: string,firstname: string, lastname: string, mobile_no: string,role: string, created_by: string) => {
   try {
     const newUser = await User.create({
       username,
       password,
+      title,
+      firstname,
+      lastname,
+      mobile_no,
       role: role || "user",
+      created_by,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     });

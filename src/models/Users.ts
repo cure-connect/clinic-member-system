@@ -3,18 +3,23 @@ import sequelize from "../database/db";
 import bcrypt from "bcrypt";
 
 export class User extends Model {
-  declare id: number;
+  declare userid: number;
   declare username: string;
   declare password: string;
+  declare title: string
+  declare firstname: string;
+  declare lastname: string;
+  declare mobile_no: string;
   declare role: string;
   declare qrcode: string
   declare created_at: Date;
   declare updated_at: Date;
+  declare created_by: string
 }
 
 User.init(
   {
-    id: {
+    userid: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
@@ -28,6 +33,22 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    firstname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastname: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    mobile_no: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     role: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -37,6 +58,10 @@ User.init(
       type: DataTypes.TEXT,
       allowNull: true,
       defaultValue: null,
+    },
+    created_by: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
     created_at: {
       type: DataTypes.DATE

@@ -6,12 +6,13 @@ import authRoutes from "./routes/auth.routes";
 import sequelize ,{ DBConnection } from "./database/db";
 import userRoutes from "./routes/users.routes"
 import qrRoutes from "./routes/qr.routes"
+import rewardRoutes from "./routes/reward.routes"
 
 const app = express();
 
 (async () => {
   await DBConnection();
-  await sequelize.sync({ alter: true });
+  await sequelize.sync({ force: true });
 })();
 
 app.use(cors());
@@ -29,5 +30,6 @@ app.use("/auth", authRoutes);
 
 app.use("/api", userRoutes)
 app.use("/api", qrRoutes)
+app.use("/api", rewardRoutes)
 
 export default app;
