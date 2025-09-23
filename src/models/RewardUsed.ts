@@ -4,7 +4,7 @@ import { User } from "./Users";
 import { Reward } from "./Reward";
 
 export class RewardUsed extends Model {
-  declare reward_used_id: string;
+  declare reward_used_id: number;
   declare rewardid: string;
   declare userid: string;
   declare created_at: Date;
@@ -14,9 +14,9 @@ export class RewardUsed extends Model {
 
 RewardUsed.init(
   {
-    reward_used_id: { type: DataTypes.STRING, primaryKey: true },
-    rewardid: { type: DataTypes.STRING, allowNull: false },
-    userid: { type: DataTypes.STRING, allowNull: false },
+    reward_used_id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    rewardid: { type: DataTypes.INTEGER, allowNull: false },
+    userid: { type: DataTypes.INTEGER, allowNull: false },
     created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     created_by: DataTypes.STRING,

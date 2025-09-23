@@ -2,7 +2,7 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../database/db";
 
 export class Reward extends Model {
-  declare rewardid: number;
+  declare rewardid: string;
   declare title: string;
   declare description?: string;
   declare point_require: number;
@@ -18,7 +18,7 @@ export class Reward extends Model {
 Reward.init(
   {
     rewardid: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,

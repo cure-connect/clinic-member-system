@@ -1,33 +1,60 @@
 import { Reward } from "../models/Reward"
 
+interface CreateUserPayload {
+    username: string;
+    password: string;
+    title?: string;
+    firstname: string;
+    lastname: string;
+    mobile_no?: string;
+    role?: string;
+    created_by?: string;
+}
+
 //POST Reward
-export const createReward = async (
-    title: string,
-    description: string,
-    point_require: number,
-    limit_per_user: string,
-    start_date: Date,
-    end_date: Date,
-    status_campaign: string,
-    created_by: string
-) => {
+export const createReward = async (payload: CreateUserPayload) => {
     try {
         const newReward = await Reward.create({
-            title,
-            description,
-            point_require,
-            limit_per_user,
-            start_date,
-            end_date,
-            status_campaign,
+            ...payload,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
-            created_by
         })
 
         return newReward
+
     } catch (error) {
         console.error("Error in createReward", error)
+        throw error
+    }
+}
+
+//GET All Rewards
+export const getAllReward = async () => {
+    try {
+        const result = await Reward.findAll({})
+        return result
+    } catch (error) {
+        console.error("Error in getAllReward", error)
+        throw error 
+    }
+}
+
+export const getRewardById = async (id: number) => {
+    try {
+        const result = await Reward.findByPk(id)
+        return result
+    } catch (error) {
+        console.error("Error in getRewardById", error)
+        throw error   
+    }
+}
+
+export const deleteReward = async (id: number) => {
+    try {
+        const deleteReward = await Reward.destroy({ where: { rewardid: id }})
+        return deleteReward
+    } catch (error) {
+        console.error("Error in deleteReward", error)
         throw error
     }
 }

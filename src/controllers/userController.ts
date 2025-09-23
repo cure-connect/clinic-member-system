@@ -1,15 +1,17 @@
 import { Request, Response } from "express";
-import { createUser, deleteUserById, getUser, getUserById } from '../services/user.service'
+import { createUser, patchUser ,deleteUserById, getUser, getUserById } from '../services/user.service'
+import { genQR } from "../utils/qrcode";
+import { User } from "../models/Users"
 
 export const createUserController = async (req: Request, res: Response) => {
   try {
-    const { username, password, title, firstname, lastname, mobile_no, role, created_by } = req.body;
+    const payload = req.body;
 
-    if (!username || !password) {
+    if (!payload.username || !payload.password) {
       return res.status(400).json({ message: "username and password are required" });
     }
 
-    const newUser = await createUser(username, password, title, firstname, lastname, mobile_no,role, created_by)
+    const newUser = await createUser(payload)
 
     return res.status(201).json({
       message: 'create user successfully!!',
@@ -19,10 +21,39 @@ export const createUserController = async (req: Request, res: Response) => {
       lastname: newUser.lastname,
       phone: newUser.mobile_no,
       role: newUser.role,
+      qrcode: newUser.qrcode,
       created_by: newUser.created_by,
       created_at: newUser.created_at,
       updated_at: newUser.updated_at
     });
+
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+export const createQRById = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id)
+    if (!id) return res.status(400).json({ message: "Please provide id" });
+
+    const getid = await getUserById(id);
+    if (!getid) return res.status(404).json({ message: "User not found" });
+
+    const generate = await genQR(getid.userid, getid.username, getid.role);
+
+    await User.update({
+      qrcode: generate,
+      updated_at: new Date()
+    },{
+      where: { userid: getid.userid}
+    })
+
+    return res.status(200).json({
+      message: "Created QR Success!",
+      data: getid
+    })
 
   } catch (error: any) {
     console.error(error);
@@ -56,6 +87,28 @@ export const getUserByIdController = async (req: Request, res: Response) => {
     return res.status(200).json(getid);
   } catch (error: any) {
     console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const patchUserController = async (req: Request, res: Response) => {
+  try {
+    const { userid } = req.params;
+    const { password, firstname, lastname, mobile_no } = req.body;
+
+    const updatedUser = await patchUser(userid, {
+      password,
+      firstname,
+      lastname,
+      mobile_no,
+    });
+
+    return res.status(200).json({
+      message: "User updated successfully",
+      data: updatedUser,
+    });
+  } catch (error: any) {
+    console.error("Error in patchUserController", error);
     return res.status(500).json({ message: error.message });
   }
 };
