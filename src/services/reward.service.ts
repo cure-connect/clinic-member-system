@@ -1,18 +1,18 @@
 import { Reward } from "../models/Reward"
 
-interface CreateUserPayload {
-    username: string;
-    password: string;
-    title?: string;
-    firstname: string;
-    lastname: string;
-    mobile_no?: string;
-    role?: string;
-    created_by?: string;
+interface CreateRewardPayload {
+    title: string,
+    description: string
+    point_require: number,
+    limit_per_user: number,
+    start_date: Date,
+    end_date: Date,
+    status_campaign: string,
+    created_by: string
 }
 
 //POST Reward
-export const createReward = async (payload: CreateUserPayload) => {
+export const createReward = async (payload: CreateRewardPayload) => {
     try {
         const newReward = await Reward.create({
             ...payload,
@@ -35,7 +35,7 @@ export const getAllReward = async () => {
         return result
     } catch (error) {
         console.error("Error in getAllReward", error)
-        throw error 
+        throw error
     }
 }
 
@@ -45,13 +45,37 @@ export const getRewardById = async (id: number) => {
         return result
     } catch (error) {
         console.error("Error in getRewardById", error)
-        throw error   
+        throw error
     }
 }
 
+export const updatedReward = async (
+    rewardid: number,
+    payload: {
+        description: string,
+        point_require: number,
+        limit_per_user: number,
+        start_date: Date,
+        end_date: Date,
+        status_campaign: string
+    }
+) => {
+    const reward = await Reward.findByPk(rewardid);
+    if (!reward) {
+        throw new Error("Reward not found");
+    }
+
+    await reward.update({
+        ...payload,
+        updated_at: new Date(),
+    });
+
+    return reward;
+};
+
 export const deleteReward = async (id: number) => {
     try {
-        const deleteReward = await Reward.destroy({ where: { rewardid: id }})
+        const deleteReward = await Reward.destroy({ where: { rewardid: id } })
         return deleteReward
     } catch (error) {
         console.error("Error in deleteReward", error)

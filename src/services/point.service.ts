@@ -46,3 +46,24 @@ export const getAllPointUser = async () => {
         throw error
     }
 }
+
+export const deletePoints = async (userid: number, points: number) => {
+
+  const userPoints = await Points.findOne({
+    where: { userid, status: "active" },
+  });
+
+  if (!userPoints) {
+    throw new Error("User points not found");
+  }
+
+  const currentScore = userPoints.score ?? 0;
+  if (currentScore < points) {
+    throw new Error("Not enough points");
+  }
+
+  userPoints.score = currentScore - points;
+  await userPoints.save();
+
+  return userPoints.score;
+};

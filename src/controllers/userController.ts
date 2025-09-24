@@ -35,7 +35,7 @@ export const createUserController = async (req: Request, res: Response) => {
 
 export const createQRById = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id)
+    const id = parseInt(req.params.id)
     if (!id) return res.status(400).json({ message: "Please provide id" });
 
     const getid = await getUserById(id);
@@ -78,7 +78,7 @@ export const getAllUserController = async (req: Request, res: Response) => {
 
 export const getUserByIdController = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
+    const id = parseInt(req.params.id);
     if (!id) return res.status(400).json({ message: "Please provide id" });
 
     const getid = await getUserById(id);
@@ -93,7 +93,7 @@ export const getUserByIdController = async (req: Request, res: Response) => {
 
 export const patchUserController = async (req: Request, res: Response) => {
   try {
-    const { userid } = req.params;
+    const userid = parseInt(req.params.id)
     const { password, firstname, lastname, mobile_no } = req.body;
 
     const updatedUser = await patchUser(userid, {
@@ -115,7 +115,7 @@ export const patchUserController = async (req: Request, res: Response) => {
 
 export const deleteUserByIdController = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id)
+    const id = parseInt(req.params.id)
     if (!id) return res.status(400).json({ message: "Please provide id"});
 
     const deleteUser = await deleteUserById(id)

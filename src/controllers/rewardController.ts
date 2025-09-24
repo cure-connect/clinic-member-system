@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAllReward ,createReward, getRewardById, deleteReward } from '../services/reward.service'
+import { getAllReward ,createReward, getRewardById, deleteReward, updatedReward } from '../services/reward.service'
 
 export const createRewardController = async (req: Request, res: Response) => {
     try {
@@ -28,7 +28,7 @@ export const getAllRewardController = async (req: Request, res: Response) => {
 
 export const getRewardByIdController = async (req: Request, res: Response) => {
     try {
-        const id = Number(req.params.id);
+        const id = parseInt(req.params.id);
         const result = await getRewardById(id)
         return res.status(200).json(result)
     } catch (error: any) {
@@ -37,9 +37,21 @@ export const getRewardByIdController = async (req: Request, res: Response) => {
     }
 }
 
+export const updateRewardByIdController = async (req: Request, res: Response) => {
+    try {
+        const id = parseInt(req.params.id)
+        const payload = req.body
+        const result = await updatedReward(id,payload)
+        return res.status(200).json(result)
+    } catch (error: any) {
+        console.error("Error in updatedRewardByIdController", error);
+        return res.status(500).json({ message: error.message }); 
+    }
+}
+
 export const deleteRewardController = async (req: Request, res: Response) => {
     try {
-        const id = Number(req.params.id)
+        const id = parseInt(req.params.id)
         const result = await deleteReward(id)
         return res.status(200).json(result)
     } catch (error: any) {

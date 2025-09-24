@@ -58,7 +58,7 @@ export const createUser = async (payload: CreateUserPayload) => {
 }
 
 export const patchUser = async (
-  userid: string,
+  userid: number,
   payload: {
     password?: string;
     firstname?: string;

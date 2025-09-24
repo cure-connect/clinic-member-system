@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createPoint, getAllPointUser, getPointById } from "../services/point.service";
+import { createPoint, deletePoints, getAllPointUser, getPointById } from "../services/point.service";
 
 export const createPointController = async (req: Request, res: Response) => {
     try {
@@ -19,7 +19,7 @@ export const createPointController = async (req: Request, res: Response) => {
 
 export const getPointByIdController = async (req: Request, res: Response) => {
     try {
-        const id = Number(req.params.id)
+        const id = parseInt(req.params.id)
         const getid = await getPointById(id)
         return res.status(200).json(getid)
     } catch (error: any) {
@@ -37,3 +37,24 @@ export const getAllPointController = async (req: Request, res: Response) => {
         return res.status(500).json({ message: error.message })
     }
 }
+
+export const deletePointsController = async (req: Request, res: Response) => {
+  try {
+    const userid = parseInt(req.params.id)
+    const point = req.body.points
+
+    if (!userid || typeof point !== "number" || point <= 0) {
+      return res.status(400).json({ message: "Invalid input" });
+    }
+
+    const pointsLeft = await deletePoints(userid, point);
+
+    return res.status(200).json({
+      message: "Points deleted successfully",
+      points_left: pointsLeft,
+    });
+  } catch (err: any) {
+    console.error("Error in deductPointsController", err);
+    return res.status(500).json({ message: err.message });
+  }
+};
