@@ -8,9 +8,9 @@ export const loginController = async (req: Request, res: Response) => {
     res.status(200).json({
       status: 'success',
       data: {
-        token: token,
+        token: token[0],
         username: username,
-        role: role
+        role: token[1]
       }
     })
   } catch (error: any) {

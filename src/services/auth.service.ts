@@ -10,12 +10,13 @@ export const login = async (username: string, password: string, role: string) =>
 
   if (!user) throw new Error("User not found");
 
+  if (!user.password) throw new Error("User password not set");
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Invalid credentials");
 
   const token = generateToken({ username: user.username, role: user.role });
 
-  return token;
+  return [token, user.role];
 };
 
 export const logout = async (req: Request, res: Response) => {

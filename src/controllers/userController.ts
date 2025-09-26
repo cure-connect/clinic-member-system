@@ -7,19 +7,16 @@ export const createUserController = async (req: Request, res: Response) => {
   try {
     const payload = req.body;
 
-    if (!payload.username || !payload.password) {
-      return res.status(400).json({ message: "username and password are required" });
-    }
-
     const newUser = await createUser(payload)
 
     return res.status(201).json({
       message: 'create user successfully!!',
       username: newUser.username,
+      password: newUser.password,
       title: newUser.title,
       firstname: newUser.firstname,
       lastname: newUser.lastname,
-      phone: newUser.mobile_no,
+      mobile_no: newUser.mobile_no,
       role: newUser.role,
       qrcode: newUser.qrcode,
       created_by: newUser.created_by,
@@ -41,7 +38,11 @@ export const createQRById = async (req: Request, res: Response) => {
     const getid = await getUserById(id);
     if (!getid) return res.status(404).json({ message: "User not found" });
 
-    const generate = await genQR(getid.userid, getid.username, getid.role);
+    const generate = await genQR(
+      getid.userid ?? "",
+      getid.username ?? "",
+      getid.role ?? ""
+    );
 
     await User.update({
       qrcode: generate,
