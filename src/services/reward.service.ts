@@ -30,14 +30,33 @@ export const createReward = async (payload: CreateRewardPayload) => {
 
 //GET All Rewards
 export const getAllReward = async () => {
-    try {
-        const result = await Reward.findAll({})
-        return result
-    } catch (error) {
-        console.error("Error in getAllReward", error)
-        throw error
-    }
-}
+  try {
+    const result = await Reward.findAll({
+      order: [['created_at', 'DESC']]
+    });
+
+    const formattedResult = result.map(r => {
+      const reward = r.toJSON();
+
+      if (reward.end_date) {
+        const date = new Date(reward.end_date);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear() + 543;
+        reward.end_date = `${day}/${month}/${year}`;
+      }
+
+      return reward;
+    });
+
+    return formattedResult;
+  } catch (error) {
+    console.error("Error in getAllReward:", error);
+    throw error;
+  }
+};
+
+
 
 export const getRewardById = async (id: number) => {
     try {

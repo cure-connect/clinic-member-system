@@ -77,6 +77,9 @@ User.init(
     modelName: "User",
     tableName: "users",
     timestamps: false,
+    defaultScope: {
+      order: [['created_at', 'DESC']],
+    },
     hooks: {
       beforeCreate: async (user) => {
         if (user.password) {

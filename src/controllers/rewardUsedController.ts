@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Points } from "../models/Point";
 import { RewardUsed } from "../models/RewardUsed";
 import { Reward } from "../models/Reward";
+import { getHistoryReward } from "../services/rewardUsed.service";
 
 export const createRewardUsedController = async (req: Request, res: Response) => {
     try {
@@ -34,6 +35,7 @@ export const createRewardUsedController = async (req: Request, res: Response) =>
             rewardid,
             userid,
             created_by,
+            points_used: pointsToUse
         });
 
         userPoints.score = currentScore - pointsToUse;
@@ -57,3 +59,13 @@ export const createRewardUsedController = async (req: Request, res: Response) =>
         return res.status(500).json({ message: err.message });
     }
 };
+
+export const getHistoryRewardController = async (req: Request, res: Response) => {
+    try {
+        const result = await getHistoryReward();
+        return res.status(200).json(result)
+    } catch (err: any) {
+        console.error("Error in getHistoryRewardController", err);
+        return res.status(500).json({ message: err.message }); 
+    }
+}

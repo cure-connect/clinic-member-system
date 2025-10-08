@@ -14,7 +14,7 @@ export const login = async (username: string, password: string, role: string) =>
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Invalid credentials");
 
-  const token = generateToken({ username: user.username, role: user.role });
+  const token = generateToken({ userid: user.userid ,username: user.username, role: user.role });
 
   return [token, user.role];
 };

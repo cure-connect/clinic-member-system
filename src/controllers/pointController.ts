@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { createPoint, deletePoints, getAllPointUser, getPointById } from "../services/point.service";
+import { createOrUpdatePoint, deletePoints, getAllPointUser, getPointById } from "../services/point.service";
 
 export const createPointController = async (req: Request, res: Response) => {
     try {
         const payload = req.body
-        const newPoint = await createPoint(payload)
+        const newPoint = await createOrUpdatePoint(payload)
 
         return res.status(201).json({
             message: "Created Point successfully!",

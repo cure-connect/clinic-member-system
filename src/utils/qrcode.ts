@@ -1,14 +1,16 @@
 import QRCode from "qrcode";
 
 interface Payload {
-  id: number | string;
-  username: string;
+  userid: number;
+  username?: string;
+  firstname?: string;
+  lastname?: string;
   role: string;
 }
 
-export const genQR = async (id: number | string, username: string, role: string): Promise<string> => {
+export const genQR = async (userid: number, username: string, firstname: string, lastname: string, role: string): Promise<string> => {
   try {
-    const payload: Payload = { id, username, role };
+    const payload: Payload = { userid, username, firstname, lastname, role };
 
     const qrDataUrl = await QRCode.toDataURL(JSON.stringify(payload), {
       type: "image/png",

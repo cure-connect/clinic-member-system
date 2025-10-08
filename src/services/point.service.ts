@@ -10,21 +10,37 @@ interface CreateUserPayload {
 }
 
 //POST Point
-export const createPoint = async (payload: CreateUserPayload) => {
-    try {
-        const newReward = await Points.create({
-            ...payload,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-        })
+export const createOrUpdatePoint = async (payload: CreateUserPayload) => {
+  try {
+    const existingPoint = await Points.findOne({
+      where: { userid: payload.userid },
+    });
 
-        return newReward
+    if (existingPoint) {
+      const newScore = (existingPoint.score || 0) + payload.score;
 
-    } catch (error) {
-        console.error("Error in createReward", error)
-        throw error
+      await existingPoint.update({
+        score: newScore,
+        reward_used_id: payload.reward_used_id,
+        status: payload.status,
+        created_by: payload.created_by,
+        updated_at: new Date().toISOString(),
+      });
+
+      return existingPoint;
+    } else {
+      const newPoint = await Points.create({
+        ...payload,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+      return newPoint;
     }
-}
+  } catch (error) {
+    console.error("Error in createOrUpdatePoint", error);
+    throw error;
+  }
+};
 
 export const getPointById = async (id: number) => {
     try {

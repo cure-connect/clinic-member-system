@@ -1,13 +1,31 @@
 import { Request, Response } from "express";
-import { createUser, patchUser ,deleteUserById, getUser, getUserById } from '../services/user.service'
+import { createUser, patchUser ,deleteUserById, getUser, getUserById, getStaff } from '../services/user.service'
 import { genQR } from "../utils/qrcode";
 import { User } from "../models/Users"
+
+import jwt from "jsonwebtoken";
+
+interface JwtPayload {
+  userid: number;
+  username: string;
+  role: string;
+}
 
 export const createUserController = async (req: Request, res: Response) => {
   try {
     const payload = req.body;
 
+
+
     const newUser = await createUser(payload)
+    const QR = await genQR(newUser.userid, newUser.username || "", newUser.firstname, newUser.lastname, newUser.role || "user")
+
+    await User.update({
+      qrcode: QR,
+      updated_at: new Date()
+    },{
+      where: { userid: newUser.userid}
+    })
 
     return res.status(201).json({
       message: 'create user successfully!!',
@@ -18,7 +36,7 @@ export const createUserController = async (req: Request, res: Response) => {
       lastname: newUser.lastname,
       mobile_no: newUser.mobile_no,
       role: newUser.role,
-      qrcode: newUser.qrcode,
+      qrcode: QR,
       created_by: newUser.created_by,
       created_at: newUser.created_at,
       updated_at: newUser.updated_at
@@ -29,6 +47,42 @@ export const createUserController = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 }
+
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ message: "Unauthorized" });
+
+    const token = authHeader.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+    let decoded: JwtPayload;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    } catch (err) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    console.log("decoded user:", decoded);
+
+    if (!["manager", "admin"].includes(decoded.role)) {
+      return res.status(403).json({ message: "You are not authorized" });
+    }
+
+    const user = await User.findOne({
+      where: { username: decoded.username },
+      attributes: ["userid", "username", "firstname", "lastname", "role"],
+    });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    return res.json(user);
+  } catch (error) {
+    console.error("Error in getMe:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 export const createQRById = async (req: Request, res: Response) => {
   try {
@@ -41,6 +95,8 @@ export const createQRById = async (req: Request, res: Response) => {
     const generate = await genQR(
       getid.userid ?? "",
       getid.username ?? "",
+      getid.firstname ?? "",
+      getid.lastname ?? "",
       getid.role ?? ""
     );
 
@@ -51,9 +107,11 @@ export const createQRById = async (req: Request, res: Response) => {
       where: { userid: getid.userid}
     })
 
+    const result = await getUserById(id);
+
     return res.status(200).json({
       message: "Created QR Success!",
-      data: getid
+      data: result
     })
 
   } catch (error: any) {
@@ -76,6 +134,19 @@ export const getAllUserController = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const getStaffController = async (req: Request, res: Response) => {
+  try {
+    const result = await getStaff();
+    if(!result || result.length === 0) {
+      return res.status(404).json({ message: "Staff not found" })
+    }
+    return res.status(200).json(result) 
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+}
 
 export const getUserByIdController = async (req: Request, res: Response) => {
   try {
