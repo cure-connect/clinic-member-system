@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { createUser, patchUser ,deleteUserById, getUser, getUserById, getStaff } from '../services/user.service'
 import { genQR } from "../utils/qrcode";
 import { User } from "../models/Users"
+import multer from "multer";
+import XLSX from "xlsx";
 
 import jwt from "jsonwebtoken";
 
@@ -199,3 +201,61 @@ export const deleteUserByIdController = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message})
   }
 }
+
+export const importExcelController = async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "กรุณาอัปโหลดไฟล์ Excel" });
+    }
+
+    const workbook = XLSX.read(req.file.buffer, { type: "buffer" });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+
+    const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet);
+
+
+    const requiredColumns = ["firstname", "lastname", "mobile_no", "role"];
+    for (const col of requiredColumns) {
+      if (!Object.keys(jsonData[0]).includes(col)) {
+        return res.status(400).json({ message: `Column '${col}' ไม่พบในไฟล์ Excel` });
+      }
+    }
+
+    const createdMembers = [];
+
+    for (const row of jsonData) {
+      const member = await User.create({
+        title: row.title || "",
+        firstname: row.firstname,
+        lastname: row.lastname,
+        mobile_no: row.mobile_no,
+        role: row.role,
+        created_by: row.created_by || "Import From Excel",
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+
+      const qrCode = await genQR(
+        member.userid,
+        member.username || "",
+        member.firstname,
+        member.lastname,
+        member.role
+      );
+
+      await member.update({ qrcode: qrCode });
+
+      createdMembers.push(member);
+    }
+
+    res.status(201).json({
+      message: "เพิ่มสมาชิกสำเร็จ พร้อมสร้าง QR Code",
+      data: createdMembers,
+    });
+  } catch (error) {
+    console.error("Error uploading Excel:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปโหลดไฟล์" });
+  }
+};
+

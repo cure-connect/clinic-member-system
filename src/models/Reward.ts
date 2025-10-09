@@ -27,8 +27,8 @@ Reward.init(
     description: DataTypes.TEXT,
     point_require: { type: DataTypes.INTEGER, allowNull: false },
     limit_per_user: DataTypes.INTEGER,
-    start_date: DataTypes.DATE,
-    end_date: DataTypes.DATE,
+    start_date: { type: DataTypes.DATE, allowNull: true },
+    end_date: { type: DataTypes.DATE, allowNull: true },
     status_campaign: {
       type: DataTypes.ENUM("active", "expired", "coming_soon"),
       defaultValue: "coming_soon",

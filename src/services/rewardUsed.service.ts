@@ -36,12 +36,14 @@ export const getHistoryReward = async () => {
 	            r.title as title,
 	            r.description as description,
                 ru.points_used as points_to_used,
+                ru.created_at as created_at,
 	            r.start_date as start_date,
 	            r.end_date as end_date
             from reward_used ru 
             left join rewards r on r.rewardid = ru.rewardid 
             left join users u on u.userid = ru.userid
             where u.role = 'user'
+            order by ru.created_at desc
             `,
             { type: QueryTypes.SELECT }
         )
