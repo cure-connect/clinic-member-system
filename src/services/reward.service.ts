@@ -17,7 +17,7 @@ export const createReward = async (payload: CreateRewardPayload) => {
         const newReward = await Reward.create({
             ...payload,
             start_date: payload.start_date ? new Date(payload.start_date) : null,
-            end_date: payload.end_date ? new Date(payload.end_date) : 'ไม่มีวันหมดอายุ',
+            end_date: payload.end_date ? new Date(payload.end_date) : null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
         })

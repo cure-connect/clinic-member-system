@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import { genQR } from "../utils/qrcode";
 import sequelize from "../database/db";
 import { QueryTypes } from "sequelize";
+import { RewardUsed } from "../models/RewardUsed";
+import { Points } from "../models/Point";
 
 
 export const getUser = async () => {
@@ -124,6 +126,8 @@ export const patchUser = async (
 //DELETE Delete User
 export const deleteUserById = async (id: number) => {
   try {
+    await Points.destroy({ where: { userid: id }})
+    await RewardUsed.destroy({ where: { userid: id}})
     const deleteUser = await User.destroy({ where: { userid: id }})
     return deleteUser
   } catch (error) {
