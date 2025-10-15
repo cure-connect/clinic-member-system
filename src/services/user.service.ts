@@ -1,6 +1,5 @@
 import { User } from "../models/Users";
 import bcrypt from "bcrypt";
-import { genQR } from "../utils/qrcode";
 import sequelize from "../database/db";
 import { QueryTypes } from "sequelize";
 import { RewardUsed } from "../models/RewardUsed";
@@ -56,18 +55,43 @@ export const getStaff = async () => {
 
 
 //GET One User
-export const getUserById = async (id: number) => {
+export const getUserById = async (userid: number) => {
   try {
-    const user = await User.findByPk(id, {
-      attributes: { exclude: ["password"] },
-    });
-    return user
+    const [results]: any = await sequelize.query(
+      `
+      SELECT 
+        u.userid AS userid,
+        u.firstname AS firstname,
+        u.lastname AS lastname,
+        p.score AS point,
+        u.mobile_no AS mobile_no,
+        p.status AS status,
+        u.role AS role,
+        u.qrcode AS qr,
+        u.created_at AS created_at,
+        u.created_by AS created_by 
+      FROM users u
+      LEFT JOIN points p ON p.userid = u.userid
+      WHERE u.userid = :userid
+      ORDER BY u.created_at DESC
+      LIMIT 1
+      `,
+      {
+        replacements: { userid },
+        type: QueryTypes.SELECT,
+      }
+    );
+    if (!results) {
+      throw new Error("User not found");
+    }
 
+    return results;
   } catch (error) {
     console.error("Error in getUserById:", error);
     throw error;
   }
-}
+};
+
 
 interface CreateUserPayload {
   username: string,

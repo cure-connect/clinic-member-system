@@ -16,9 +16,6 @@ interface JwtPayload {
 export const createUserController = async (req: Request, res: Response) => {
   try {
     const payload = req.body;
-
-
-
     const newUser = await createUser(payload)
     const QR = await genQR(newUser.userid, newUser.username || "", newUser.firstname, newUser.lastname, newUser.role || "user")
 

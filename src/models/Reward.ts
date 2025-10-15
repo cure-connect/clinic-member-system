@@ -26,7 +26,7 @@ Reward.init(
     title: { type: DataTypes.STRING, allowNull: false },
     description: DataTypes.TEXT,
     point_require: { type: DataTypes.INTEGER, allowNull: false },
-    limit_per_user: DataTypes.INTEGER,
+    limit_per_user: { type: DataTypes.INTEGER, allowNull: true },
     start_date: { type: DataTypes.DATE, allowNull: true },
     end_date: { type: DataTypes.DATE, allowNull: true },
     status_campaign: {

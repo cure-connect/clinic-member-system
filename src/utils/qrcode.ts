@@ -8,9 +8,22 @@ interface Payload {
   role: string;
 }
 
-export const genQR = async (userid: number, username: string, firstname: string, lastname: string, role: string): Promise<string> => {
+export const genQR = async (
+  userid: number,
+  username: string,
+  firstname: string,
+  lastname: string,
+  role: string
+): Promise<string> => {
   try {
-    const payload: Payload = { userid, username, firstname, lastname, role };
+    const payload: Payload & { userUrl: string } = {
+      userid,
+      username,
+      firstname,
+      lastname,
+      role,
+      userUrl: `http://localhost:5173/userinfo/${userid}`
+    };
 
     const qrDataUrl = await QRCode.toDataURL(JSON.stringify(payload), {
       type: "image/png",
