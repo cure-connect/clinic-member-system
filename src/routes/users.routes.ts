@@ -9,15 +9,15 @@ export const upload = multer({ storage });
 const router = Router()
 
 router.get("/me", authMiddleware ,getMe)
-router.get("/user", getAllUserController)
-router.get("/users/:id", getUserByIdController)
-router.get("/staff", getStaffController)
+router.get("/user", authMiddleware,getAllUserController)
+router.get("/users/:id",getUserByIdController)
+router.get("/staff", authMiddleware,getStaffController)
 
-router.post("/user/import", upload.single('file'), importExcelController)
+router.post("/user/import", upload.single('file'), authMiddleware ,importExcelController)
 
-router.post("/create", createUserController)
-router.post("/createqr/:id", createQRById)
-router.patch("/update/:id", patchUserController)
+router.post("/create", authMiddleware,createUserController)
+router.post("/createqr/:id", authMiddleware,createQRById)
+router.patch("/update/:id", authMiddleware,patchUserController)
 
-router.delete("/users/:id", deleteUserByIdController)
+router.delete("/users/:id", authMiddleware,deleteUserByIdController)
 export default router

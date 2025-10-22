@@ -22,7 +22,7 @@ export const genQR = async (
       firstname,
       lastname,
       role,
-      userUrl: `http://localhost:5173/userinfo/${userid}`
+      userUrl: `${process.env.WEB_URL}/userinfo/${userid}`
     };
 
     const qrDataUrl = await QRCode.toDataURL(JSON.stringify(payload), {

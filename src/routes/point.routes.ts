@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { getPointByIdController,createPointController, getAllPointController, deletePointsController, getAllHistoryPoint } from "../controllers/pointController";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 
 
 const router = Router()
 
-router.get("/point", getAllPointController)
-router.get("/point/:id", getPointByIdController)
-router.get("/historypoint", getAllHistoryPoint)
-router.post("/point", createPointController)
-router.delete("/point/:id", deletePointsController)
+router.get("/point", authMiddleware,getAllPointController)
+router.get("/point/:id", authMiddleware,getPointByIdController)
+router.get("/historypoint", authMiddleware ,getAllHistoryPoint)
+router.post("/point", authMiddleware,createPointController)
+router.delete("/point/:id", authMiddleware,deletePointsController)
 export default router

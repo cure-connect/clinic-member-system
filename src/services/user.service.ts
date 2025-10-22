@@ -4,6 +4,7 @@ import sequelize from "../database/db";
 import { QueryTypes } from "sequelize";
 import { RewardUsed } from "../models/RewardUsed";
 import { Points } from "../models/Point";
+import { PointsHistory } from "../models/PointsHistory";
 
 
 export const getUser = async () => {
@@ -150,6 +151,7 @@ export const patchUser = async (
 //DELETE Delete User
 export const deleteUserById = async (id: number) => {
   try {
+    await PointsHistory.destroy({ where: { userid: id }})
     await Points.destroy({ where: { userid: id }})
     await RewardUsed.destroy({ where: { userid: id}})
     const deleteUser = await User.destroy({ where: { userid: id }})
