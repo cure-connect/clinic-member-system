@@ -8,7 +8,6 @@ import userRoutes from "./routes/users.routes"
 import rewardRoutes from "./routes/reward.routes"
 import pointRoutes from "./routes/point.routes"
 import rewardUsedRoutes from "./routes/rewardUsed.routes"
-
 const app = express();
 
 (async () => {
@@ -16,7 +15,11 @@ const app = express();
   await sequelize.sync({ alter: true });
 })();
 
-app.use(cors({ origin: '*' }));
+app.use(cors({
+  origin: process.env.WEB_URL,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
