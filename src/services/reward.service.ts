@@ -76,9 +76,7 @@ export const updatedReward = async (
         description: string,
         point_require: number,
         limit_per_user: number,
-        start_date: Date,
         end_date: Date,
-        status_campaign: string
     }
 ) => {
     const reward = await Reward.findByPk(rewardid);
