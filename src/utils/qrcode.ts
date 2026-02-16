@@ -5,7 +5,7 @@ export const genQR = async (
 ): Promise<string> => {
   try {
 
-    const userUrl = `${process.env.WEB_URL_TEST}/userinfo/${userid}`;
+    const userUrl = `${process.env.WEB_URL}/userinfo/${userid}`;
 
     const qrDataUrl = await QRCode.toDataURL(userUrl, {
       type: "image/png",
