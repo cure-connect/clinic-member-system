@@ -17,7 +17,7 @@ export const createUserController = async (req: Request, res: Response) => {
   try {
     const payload = req.body;
     const newUser = await createUser(payload)
-    const QR = await genQR(newUser.userid, newUser.username || "", newUser.firstname, newUser.lastname, newUser.role || "user")
+    const QR = await genQR(newUser.userid)
 
     await User.update({
       qrcode: QR,
@@ -92,11 +92,7 @@ export const createQRById = async (req: Request, res: Response) => {
     if (!getid) return res.status(404).json({ message: "User not found" });
 
     const generate = await genQR(
-      getid.userid ?? "",
-      getid.username ?? "",
-      getid.firstname ?? "",
-      getid.lastname ?? "",
-      getid.role ?? ""
+      getid.userid ?? ""
     );
 
     await User.update({
@@ -234,11 +230,7 @@ export const importExcelController = async (req: Request, res: Response) => {
       });
 
       const qrCode = await genQR(
-        member.userid,
-        member.username || "",
-        member.firstname,
-        member.lastname,
-        member.role
+        member.userid
       );
 
       await member.update({ qrcode: qrCode });
