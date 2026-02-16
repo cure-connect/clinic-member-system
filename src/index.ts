@@ -8,6 +8,8 @@ import userRoutes from "./routes/users.routes"
 import rewardRoutes from "./routes/reward.routes"
 import pointRoutes from "./routes/point.routes"
 import rewardUsedRoutes from "./routes/rewardUsed.routes"
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger";
 const app = express();
 
 (async () => {
@@ -16,7 +18,7 @@ const app = express();
 })();
 
 app.use(cors({
-  origin: [`${process.env.WEB_URL}`, "http://localhost:5173"],
+  origin: [`${process.env.WEB_URL}`, "http://localhost:5173", "http://localhost:8888"],
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true,
 }));
@@ -29,6 +31,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`[${thailandTime.toISOString()}] ${req.method} ${req.url}`);
   next();
 });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/auth", authRoutes);
 
