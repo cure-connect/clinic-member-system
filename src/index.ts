@@ -18,7 +18,7 @@ const app = express();
 })();
 
 app.use(cors({
-  origin: [`${process.env.WEB_URL}`, "http://localhost:5173", "http://localhost:8888"],
+  origin: [`${process.env.WEB_URL}`, "http://localhost:5173", "http://localhost:5179"],
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true,
 }));
